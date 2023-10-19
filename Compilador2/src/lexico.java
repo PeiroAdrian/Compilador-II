@@ -377,18 +377,22 @@ class lexico {
                                             break;
                                         } else {
                                             System.out.println("Error, se espera: }");
+                                            errorEncontradoSintactico = true;
                                             return;
                                         }
                                     } else {
                                         System.out.println("Error, se espera: {");
+                                        errorEncontradoSintactico = true;
                                         return;
                                     }
                                 } else {
                                     System.out.println("Error, se espera: else");
+                                    errorEncontradoSintactico = true;
                                     return;
                                 }
                             } else {
                                 System.out.println("Error, se espera: }");
+                                errorEncontradoSintactico = true;
                                 return;
                             }
                         } else {
@@ -549,6 +553,7 @@ class lexico {
                 return true;
             default:
                 System.out.println("Error, se espera definir tipo de variable");
+                errorEncontradoSintactico = true;
                 return false;
         }
     }

@@ -6,13 +6,25 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import javax.swing.JFileChooser;
 
 public class Interfaz_Lexico extends javax.swing.JFrame {
-
+    JFileChooser seleccionar = new JFileChooser();
     private File selectedFile;
+    File archivo;
+    FileInputStream entrada;
+    FileOutputStream salida;
+    
+    //Declarar Objeto
+    lexico Obj_lexico = new lexico();
 
     public Interfaz_Lexico() {
         initComponents();
+        
+        
 
         btnAccion.addActionListener(new ActionListener() {
             @Override
@@ -77,8 +89,8 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
         btnGuardar = new javax.swing.JButton();
         btnCompilar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        lblSin = new javax.swing.JLabel();
+        lblLex = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Compilador");
@@ -88,6 +100,7 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
         txtAreaEntrada.setRows(5);
         jScrollPane1.setViewportView(txtAreaEntrada);
 
+        txtAreaSalida.setEditable(false);
         txtAreaSalida.setColumns(20);
         txtAreaSalida.setRows(5);
         jScrollPane2.setViewportView(txtAreaSalida);
@@ -100,6 +113,7 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
         });
 
         btnAccion.setText("Ejecutar");
+        btnAccion.setEnabled(false);
         btnAccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAccionActionPerformed(evt);
@@ -109,17 +123,28 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
         btnNuevo.setText("Nuevo");
 
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnCompilar.setText("Compilar");
+        btnCompilar.setEnabled(false);
+        btnCompilar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCompilarActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("Estados:");
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel2.setText("2) Sintaxis: --");
+        lblSin.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblSin.setText("2) Sintaxis: --");
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel3.setText("1) Léxico: --");
+        lblLex.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblLex.setText("1) Léxico: --");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -150,9 +175,9 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
                 .addGap(17, 17, 17)
                 .addComponent(jLabel1)
                 .addGap(178, 178, 178)
-                .addComponent(jLabel3)
+                .addComponent(lblLex)
                 .addGap(106, 106, 106)
-                .addComponent(jLabel2)
+                .addComponent(lblSin)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -174,8 +199,8 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2))))
+                            .addComponent(lblLex)
+                            .addComponent(lblSin))))
                 .addGap(29, 29, 29)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
                 .addContainerGap())
@@ -198,12 +223,44 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnChooseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseFileActionPerformed
-        // TODO add your handling code here:
+        btnCompilar.setEnabled(true);
     }//GEN-LAST:event_btnChooseFileActionPerformed
 
     private void btnAccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAccionActionPerformed
+
+    private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
+        btnAccion.setEnabled(true);
+        if (Obj_lexico.errorEncontrado) {
+            lblLex.setText("1) Léxico: ERROR");
+        } else {
+            lblLex.setText("1) Léxico: OK");
+        }
+
+        if (Obj_lexico.errorEncontradoSintactico) {
+            lblSin.setText("2) Sintaxis: ERROR");
+        } else {
+            lblSin.setText("2) Sintaxis: OK");
+        }
+    }//GEN-LAST:event_btnCompilarActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        if (seleccionar.showDialog(null, "Guardar") == JFileChooser.APPROVE_OPTION) {
+            archivo=seleccionar.getSelectedFile();
+            if (archivo.getName().endsWith("txt")) {
+                String Documento=txtAreaEntrada.getText();
+                String mensaje=GuardarArchivo(archivo, Documento);
+                if (mensaje!=null) {
+                    JOptionPane.showMessageDialog(null, mensaje);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Archivo No Compatible");
+                }
+            }else{
+                JOptionPane.showMessageDialog(null, "Guardar Documento de Texto");
+            }
+        }
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void loadFileContent(File file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -226,6 +283,18 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
                 ex.printStackTrace();
             }
         }
+    }
+    
+    private String GuardarArchivo (File archivo, String documento){
+        String mensaje = null;
+        try {
+            salida = new FileOutputStream(archivo);
+            byte[] bytxt=documento.getBytes();
+            salida.write(bytxt);
+            mensaje="Archivo Guardado";
+        } catch (Exception e) {
+        }
+        return mensaje;
     }
 
     public static void main(String args[]) {
@@ -267,11 +336,11 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblLex;
+    private javax.swing.JLabel lblSin;
     private javax.swing.JTextArea txtAreaEntrada;
     private javax.swing.JTextArea txtAreaSalida;
     // End of variables declaration//GEN-END:variables
