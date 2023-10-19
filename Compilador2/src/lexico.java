@@ -278,7 +278,7 @@ class lexico {
         
         System.out.println("\nImprimiendo Tabla de Simbolos:");
         for(int m = 0; m<Simbolos.size(); m++){
-            System.out.println(Simbolos.get(m).lexema + " " + Simbolos.get(m).tipoDato);
+            System.out.println(Simbolos.get(m).lexema + " " + Simbolos.get(m).tipoDato + " " +Simbolos.get(m).numLinea);
             //System.out.println(Simbolos.get(m).tipoDato);
         }
     }
@@ -297,7 +297,7 @@ class lexico {
             if (p.token == 100 || p.token == 101) {// id
                 //codigo añadido para semantico
                 iD = p.lexema;
-                renglonT = 1;
+                renglonT = p.renglon;
                 simbolo1.numLinea = 1;
                 simbolo1.lexema = iD;
                 simbolo1.tipoDato = tipoDeDato;
@@ -305,7 +305,7 @@ class lexico {
                     insertarSimbolo(renglonT, iD, tipoDeDato);
                 }
 
-                renglonT = 1;
+                //renglonT = 1;
                 iD = "";
 
                 //fin codigo añadido
