@@ -11,66 +11,87 @@ class lexico {
     int columna;
     int valorMT;
     int numRenglon = 1;
-
+    String mensaje;
     int caracter = 0;
     String lexema = "";
     boolean errorEncontrado = false;
     boolean errorEncontradoSintactico = false;
 
     String archivo = "C:\\Users\\Adrian\\Desktop\\codigo.txt";
-   
-    //Variables para el semantico
+
+    // Variables para el semantico
     ArrayList<TablaSimbolos> Simbolos = new ArrayList<TablaSimbolos>();
     TablaSimbolos simbolo1 = new TablaSimbolos();
     String tipoDeDato, iD;
     int renglonT;
 
-    int matriz[][] = {
-        // 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27
-        // l @ _ d + - * / ^ < > = ! & | ( ) { } , ; " eb tab nl . eof oc
+    // Variables para el semantico desbordamiento
+    String dlexema, dtipo;
 
-        /* 0 */{1, 1, 1, 2, 103, 104, 105, 5, 107, 8, 9, 10, 11, 12, 13, 117, 118, 119, 120, 124, 125, 14, 0, 0, 0, 505, 0, 505},
-        /* 1 */ {1, 1, 1, 1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
-        /* 2 */ {101, 101, 101, 2, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 3, 101, 101},
-        /* 3 */ {500, 500, 500, 4, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500},
-        /* 4 */ {102, 102, 102, 4, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102},
-        /* 5 */ {106, 106, 106, 106, 106, 106, 6, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106},
-        /* 6 */ {6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 501, 6},
-        /* 7 */ {6, 6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 501, 6},
-        /* 8 */ {108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 110, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108},
-        /* 9 */ {109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 111, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109},
-        /* 10 */ {123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 112, 123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 123},
-        /* 11 */ {116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 113, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116},
-        /* 12 */ {502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 114, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502},
-        /* 13 */ {503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 115, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503},
-        /* 14 */ {14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 122, 14, 14, 504, 14, 504, 14}
+    // Variable para la comparacion de ids
+    String idComparada;
+
+    String primerId, segundoId;
+
+    int matriz[][] = {
+            // 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27
+            // l @ _ d + - * / ^ < > = ! & | ( ) { } , ; " eb tab nl . eof oc
+
+            /* 0 */{ 1, 1, 1, 2, 103, 104, 105, 5, 107, 8, 9, 10, 11, 12, 13, 117, 118, 119, 120, 124, 125, 14, 0, 0, 0,
+                    505, 0, 505 },
+            /* 1 */ { 1, 1, 1, 1, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+                    100, 100, 100, 100, 100, 100, 100 },
+            /* 2 */ { 101, 101, 101, 2, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101,
+                    101, 101, 101, 101, 101, 3, 101, 101 },
+            /* 3 */ { 500, 500, 500, 4, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+                    500, 500, 500, 500, 500, 500, 500, 500 },
+            /* 4 */ { 102, 102, 102, 4, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102,
+                    102, 102, 102, 102, 102, 102, 102, 102 },
+            /* 5 */ { 106, 106, 106, 106, 106, 106, 6, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106,
+                    106, 106, 106, 106, 106, 106, 106, 106 },
+            /* 6 */ { 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 501, 6 },
+            /* 7 */ { 6, 6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 501, 6 },
+            /* 8 */ { 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 110, 108, 108, 108, 108, 108, 108, 108,
+                    108, 108, 108, 108, 108, 108, 108, 108, 108 },
+            /* 9 */ { 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 111, 109, 109, 109, 109, 109, 109, 109,
+                    109, 109, 109, 109, 109, 109, 109, 109, 109 },
+            /* 10 */ { 123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 123, 112, 123, 123, 123, 123, 123, 123, 123,
+                    123, 123, 123, 123, 123, 123, 123, 123, 123 },
+            /* 11 */ { 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 116, 113, 116, 116, 116, 116, 116, 116, 116,
+                    116, 116, 116, 116, 116, 116, 116, 116, 116 },
+            /* 12 */ { 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 502, 114, 502, 502, 502, 502, 502,
+                    502, 502, 502, 502, 502, 502, 502, 502, 502 },
+            /* 13 */ { 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 503, 115, 503, 503, 503, 503,
+                    503, 503, 503, 503, 503, 503, 503, 503, 503 },
+            /* 14 */ { 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 122, 14, 14,
+                    504, 14, 504, 14 }
 
     };
     String palReservadas[][] = {
-        // 0 , 1 <----- numero de columna del arreglo
-        /* 0 */{"break", "200"},
-        /* 1 */ {"if", "201"},
-        /* 2 */ {"else", "202"},
-        /* 3 */ {"main", "203"},
-        /* 13 */ {"while", "204"},
-        /* 5 */ {"go to", "205"},
-        /* 6 */ {"print", "206"},
-        /* 7 */ {"new", "207"},
-        /* 8 */ {"float", "208"},
-        /* 9 */ {"int", "209"},
-        /* 10 */ {"false", "210"},
-        /* 11 */ {"true", "211"},
-        /* 12 */ {"String", "212"},
-        /* 13 */ {"getvalue", "213"}
+            // 0 , 1 <----- numero de columna del arreglo
+            /* 0 */{ "break", "200" },
+            /* 1 */ { "if", "201" },
+            /* 2 */ { "else", "202" },
+            /* 3 */ { "main", "203" },
+            /* 13 */ { "while", "204" },
+            /* 5 */ { "go to", "205" },
+            /* 6 */ { "print", "206" },
+            /* 7 */ { "new", "207" },
+            /* 8 */ { "float", "208" },
+            /* 9 */ { "int", "209" },
+            /* 10 */ { "false", "210" },
+            /* 11 */ { "true", "211" },
+            /* 12 */ { "String", "212" },
+            /* 13 */ { "getvalue", "213" }
     };
     String errores[][] = {
-        // 0 1 <----- numero de columna del arreglo
-        /* 0 */{"se espera digito", "500"},
-        /* 1 */ {"se espera cierre de comentario", "501"},
-        /* 2 */ {"se espera & 'and' ", "502"},
-        /* 3 */ {"se espera | 'or' ", "503"},
-        /* 4 */ {"se espera cierre de cadena ", "504"},
-        /* 5 */ {"carácter no valido", "505"}
+            // 0 1 <----- numero de columna del arreglo
+            /* 0 */{ "se espera digito", "500" },
+            /* 1 */ { "se espera cierre de comentario", "501" },
+            /* 2 */ { "se espera & 'and' ", "502" },
+            /* 3 */ { "se espera | 'or' ", "503" },
+            /* 4 */ { "se espera cierre de cadena ", "504" },
+            /* 5 */ { "carácter no valido", "505" }
     };
     RandomAccessFile file = null;
 
@@ -196,7 +217,7 @@ class lexico {
 
                 } else { // estado de error
                     imprimirMensajeError();
-                    //break;
+                    // break;
                 }
 
             } // while
@@ -213,7 +234,7 @@ class lexico {
             }
         }
 
-        ////////////////////////// Analizador Sintactico //////////////////////////////////////////////////////////
+        ////////////////////////// Analizador Sintactico ////////////////////////// //////////////////////////////////////////////////////////
         p = cabeza;
         while (p != null) {
             if (p.token == 203) { // main
@@ -248,38 +269,38 @@ class lexico {
                                 System.out.println("Error, se espera: }");
                                 errorEncontradoSintactico = true;
                                 p.token = 120;
-                                //return;
+                                // return;
                             }
                         } else {
                             System.out.println("Error, se espera: {");
                             errorEncontradoSintactico = true;
                             p.token = 119;
-                            //return;
+                            // return;
                         }
                     } else {
                         System.out.println("Error, se espera: )");
                         errorEncontradoSintactico = true;
                         p.token = 118;
-                        //return;
+                        // return;
                     }
                 } else {
                     System.out.println("Error, se espera: (");
                     errorEncontradoSintactico = true;
                     p.token = 117;
-                    //return;
+                    // return;
                 }
             } else {
                 System.out.println("Error, se espera: main");
                 errorEncontradoSintactico = true;
                 p.token = 203;
-                //return;
+                // return;
             }
         }
-        
+
         System.out.println("\nImprimiendo Tabla de Simbolos:");
-        for(int m = 0; m<Simbolos.size(); m++){
-            System.out.println(Simbolos.get(m).lexema + " " + Simbolos.get(m).tipoDato + " " +Simbolos.get(m).numLinea);
-            //System.out.println(Simbolos.get(m).tipoDato);
+        for (int m = 0; m < Simbolos.size(); m++) {
+            System.out
+                    .println(Simbolos.get(m).lexema + " " + Simbolos.get(m).tipoDato + " " + Simbolos.get(m).numLinea);
         }
     }
 
@@ -295,7 +316,7 @@ class lexico {
             }
 
             if (p.token == 100 || p.token == 101) {// id
-                //codigo añadido para semantico
+                // codigo añadido para semantico
                 iD = p.lexema;
                 renglonT = p.renglon;
                 simbolo1.numLinea = 1;
@@ -305,10 +326,10 @@ class lexico {
                     insertarSimbolo(renglonT, iD, tipoDeDato);
                 }
 
-                //renglonT = 1;
+                // renglonT = 1;
                 iD = "";
 
-                //fin codigo añadido
+                // fin codigo añadido
                 p = p.siguienteNodo;
             } else {
                 System.out.println("Error, se espera: id");
@@ -508,37 +529,171 @@ class lexico {
                 }
 
             case 100:// id
-                //CompararLexema(p);
-                p = p.siguienteNodo;
-                if (p.token == 123) {// =
-                    p = p.siguienteNodo;
-                    if (p.token == 100 || p.token == 101) {// id o numero
-                        while (p.token != 125) {
-                            exp_simple();
-                        }
-                    } else {
-                        System.out.println("Error, se espera: id o numero");
-                        errorEncontradoSintactico = true;
-                        return;
-                    }
-
-                    if (p.token == 125) {// ;
-                        p = p.siguienteNodo;
-                        break;
-                    } else {
-                        System.out.println("Error, se espera: ;");
-                        errorEncontradoSintactico = true;
-                        return;
-                    }
-                } else {
-                    System.out.println("Error, se espera: =");
+                if (CompararExistencia(p) == 0) {
+                    System.out.println("Error: La variable '"+ p.lexema+"' no existe");
                     errorEncontradoSintactico = true;
-                    return;
+                    while (p.token != 125) {
+                        p = p.siguienteNodo;
+                    }
+                    errorEncontradoSintactico = true;
+                } else {
+                    idComparada = p.lexema;
+                    if (dtipo.equals("int")) {
+                        p = p.siguienteNodo;
+                        if (p.token == 123) {// =
+                            p = p.siguienteNodo;
+                            if (p.token == 100 || p.token == 101 || p.token == 104) {// id o numero
+                                if (p.token == 100) {
+                                    if (CompararExistencia(p) == 0) {
+                                        System.out.println("Error la variable: " + p.lexema + " no existe.");
+                                        errorEncontradoSintactico = true;
+                                        return;
+                                    } else {
+                                        if (CompararId(p, idComparada) == 0) {
+                                            System.out.println(
+                                                "Error: La variable " + p.lexema + " no es del mismo tipo de dato");
+                                            errorEncontradoSintactico = true;
+                                            return;
+                                        }
+                                        while (p.token != 125) {
+                                            if (p.siguienteNodo.token == 122) {
+                                                System.out.println("Error: no se pueden utilizar cadenas");
+                                            }
+                                            if (p.siguienteNodo.token == 102) {
+                                                System.out.println("Error: no se pueden utilizar floats");
+                                            }
+                                            exp_simple();
+                                        }
+                                    }
+                                } else if (p.token == 101 || p.token == 104) { // numero o float
+                                    if (p.lexema.length() > 10) {
+                                        System.out.println("Error: existe desbordamiento en el renglon " +p.renglon+ ", limite de digitos alcanzado");
+                                        errorEncontradoSintactico = true;
+                                        p = p.siguienteNodo;
+                                    } else {
+                                        while (p.token != 125) {
+                                            if (p.siguienteNodo.token == 122) {
+                                                System.out.println("Error: no se pueden utilizar cadenas");
+                                                errorEncontradoSintactico = true;
+                                            }
+                                            if (p.siguienteNodo.token == 102) {
+                                                System.out.println("Error: no se pueden utilizar floats");
+                                                errorEncontradoSintactico = true;
+                                            }
+                                            exp_simple();
+                                        }
+                                    }
+
+                                }
+                            } else {
+                                if (p.token ==  102 || p.token == 122) { // float o String
+                                    System.out.println("Error: se espera un entero");
+                                    errorEncontradoSintactico = true;
+                                    return;
+                                }
+                                System.out.println("Error, se espera: id o numero");
+                                errorEncontradoSintactico = true;
+                                return;
+                            }
+
+                            if (p.token == 125) {// ;
+                                p = p.siguienteNodo;
+                                break;
+                            } else {
+                                System.out.println("Error, se espera: ;");
+                                errorEncontradoSintactico = true;
+                                return;
+                            }
+                        } else {
+                            System.out.println("Error, se espera: =");
+                            errorEncontradoSintactico = true;
+                            return;
+                        }
+                    }
+                    if (dtipo.equals("float")) {
+                        p = p.siguienteNodo;
+                        if (p.token == 123) {// =
+                            p = p.siguienteNodo;
+                            if (p.token == 100 || p.token == 102 || p.token == 104) {// id o numero
+                                if (p.token == 102 || p.token == 104) {
+                                    if (p.lexema.length() > 10) {
+                                        System.out.println("Error: existe desbordamiento en el renglon " +p.renglon+ ", limite de digitos alcanzado");
+                                        p = p.siguienteNodo;
+                                        errorEncontradoSintactico = true;
+                                    } else {
+
+                                        while (p.token != 125) {
+                                            if (p.siguienteNodo.token == 122) {
+                                                System.out.println("Error: no se pueden utilizar cadenas");
+                                                errorEncontradoSintactico = true;
+                                            }
+                                            exp_simple();
+
+                                        }
+                                    }
+
+                                }
+                            } else {
+                                System.out.println("Error, se espera: id o numero");
+                                errorEncontradoSintactico = true;
+                                return;
+                            }
+
+                            if (p.token == 125) {// ;
+                                p = p.siguienteNodo;
+                                break;
+                            } else {
+                                System.out.println("Error, se espera: ;");
+                                errorEncontradoSintactico = true;
+                                return;
+                            }
+                        } else {
+                            System.out.println("Error, se espera: =");
+                            errorEncontradoSintactico = true;
+                            return;
+                        }
+                    }
+                    if (dtipo.equals("String")) {
+                        p = p.siguienteNodo;
+                        if (p.token == 123) {// =
+                            p = p.siguienteNodo;
+                            if (p.token == 100 || p.token == 122) {// id o numero
+                                while (p.token != 125) {
+                                    if (p.siguienteNodo.token == 102) {
+                                        System.out.println("Error: no se pueden utilizar floats");
+                                        errorEncontradoSintactico = true;
+                                    }
+                                    if (p.siguienteNodo.token == 101) {
+                                        System.out.println("Error: no se pueden utilizar enteros");
+                                        errorEncontradoSintactico = true;
+                                    }
+                                    exp_simple();
+                                }
+                            } else {
+                                System.out.println("Error, se espera: valor de cadena");
+                                errorEncontradoSintactico = true;
+                                return;
+                            }
+                            if (p.token == 125) {// ;
+                                p = p.siguienteNodo;
+                                break;
+                            } else {
+                                System.out.println("Error, se espera: ;");
+                                errorEncontradoSintactico = true;
+                                return;
+                            }
+                        } else {
+                            System.out.println("Error, se espera: =");
+                            errorEncontradoSintactico = true;
+                            return;
+                        }
+                    }
                 }
+                break;
             default:
                 System.out.println("Se espera: statement");
                 errorEncontradoSintactico = true;
-                //p = p.siguienteNodo;
+                // p = p.siguienteNodo;
                 break;
         }
     }
@@ -559,12 +714,31 @@ class lexico {
     }
 
     private void exp_cond() {
+        if (p.token == 100) {
+            primerId = p.lexema;
+            if (CompararExistencia(p) == 0) {
+                System.out.println("Error: La variable '"+p.lexema+"' no existe");
+                errorEncontradoSintactico = true;
 
+                
+            }
+        }
         if (exp_simple()) {
             if (op_rel()) {
+                if (p.token == 100) {
+                    CompararId(p, archivo);
+                    if (CompararExistencia(p) == 0) {
+                        System.out.println("Error: La variable no existe:" + p.lexema);
+                        errorEncontradoSintactico = true;
+                    }
+                    if (CompararId(p, idComparada) == 0) {
+                        System.out.println("Error: La variable '" + p.lexema + "' no es del mismo tipo de dato");
+                        errorEncontradoSintactico = true;
+                        return;
+                    }
+                }
                 if (exp_simple()) {//
                 } else {
-                    //System.out.println("Error de expresión simple");
                 }
             } else {
                 System.out.println("Error, se espera: operador relacional");
@@ -594,7 +768,6 @@ class lexico {
         } else {
             System.out.println("Error de expresión simple, se espera: termino");
             errorEncontradoSintactico = true;
-
         }
         return false;
     }
@@ -618,6 +791,12 @@ class lexico {
                 p = p.siguienteNodo;
                 return true;
             case 101: // num
+                p = p.siguienteNodo;
+                return true;
+            case 102:
+                p = p.siguienteNodo;
+                return true;
+            case 122:
                 p = p.siguienteNodo;
                 return true;
             case 117: // (
@@ -749,7 +928,6 @@ class lexico {
 
     private void insertarNodo() {
         nodo nodo = new nodo(lexema, valorMT, numRenglon);
-
         if (cabeza == null) {
             cabeza = nodo;
             p = cabeza;
@@ -764,19 +942,58 @@ class lexico {
         simbolo.numLinea = renglon;
         simbolo.lexema = iD;
         simbolo.tipoDato = tipoDD;
-
         Simbolos.add(simbolo);
     }
 
     private int CompararLexema(nodo p) {
-
         for (int m = 0; m < Simbolos.size(); m++) {
             if (Simbolos.get(m).lexema.equals(p.lexema)) {
-                System.out.println("No se puede utilizar una variable que ya está inicializada, el id " + p.lexema + " ya existe");
+                System.out.println(
+                        "No se puede utilizar una variable que ya está inicializada, el id " + p.lexema + " ya existe");
 
                 return 0;
             }
         }
         return 1;
+    }
+
+    private int CompararExistencia(nodo p) {
+        for (int m = 0; m < Simbolos.size(); m++) {
+            if (Simbolos.get(m).lexema.equals(p.lexema)) {
+                dlexema = Simbolos.get(m).lexema;
+                dtipo = Simbolos.get(m).tipoDato;
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    private int CompararId(nodo p, String cadena) {
+        String tipoDato1 = "", tipoDato2 = "";
+        for (int m = 0; m < Simbolos.size(); m++) {
+
+            if (Simbolos.get(m).lexema.equals(p.lexema)) {
+
+                tipoDato1 = Simbolos.get(m).tipoDato;
+            }
+            if (Simbolos.get(m).lexema.equals(cadena)) {
+                tipoDato2 = Simbolos.get(m).tipoDato;
+            }
+        }
+        if (tipoDato1.equals(tipoDato2)) {
+            return 1;
+        }
+        return 0;
+    }
+
+    private String RetornarTipo(nodo p) {
+        for (int m = 0; m < Simbolos.size(); m++) {
+            if (Simbolos.get(m).lexema.equals(p.lexema)) {
+                dlexema = Simbolos.get(m).lexema;
+                dtipo = Simbolos.get(m).tipoDato;
+                return dtipo;
+            }
+        }
+        return "";
     }
 }

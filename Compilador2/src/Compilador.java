@@ -7,11 +7,11 @@ public class Compilador {
     
     public static void main(String[] args) throws IOException  {
         lexico b = new lexico (); 
-        Interfaz ven = new Interfaz();
-        ven.setVisible(true);
+        //Interfaz ven = new Interfaz();
+        //ven.setVisible(true);
         if(!b.errorEncontrado)
         {
-             System.out.println("Analisis lexico terminado");
+             System.out.println("\nAnalisis lexico terminado");
          
         }
 

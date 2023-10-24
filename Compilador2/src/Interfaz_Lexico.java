@@ -12,19 +12,18 @@ import java.io.FileOutputStream;
 import javax.swing.JFileChooser;
 
 public class Interfaz_Lexico extends javax.swing.JFrame {
+
     JFileChooser seleccionar = new JFileChooser();
     private File selectedFile;
     File archivo;
     FileInputStream entrada;
     FileOutputStream salida;
-    
+
     //Declarar Objeto
     lexico Obj_lexico = new lexico();
 
     public Interfaz_Lexico() {
         initComponents();
-        
-        
 
         btnAccion.addActionListener(new ActionListener() {
             @Override
@@ -121,8 +120,14 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
         });
 
         btnNuevo.setText("Nuevo");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         btnGuardar.setText("Guardar");
+        btnGuardar.setEnabled(false);
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGuardarActionPerformed(evt);
@@ -224,6 +229,7 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
 
     private void btnChooseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseFileActionPerformed
         btnCompilar.setEnabled(true);
+        btnGuardar.setEnabled(true);
     }//GEN-LAST:event_btnChooseFileActionPerformed
 
     private void btnAccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccionActionPerformed
@@ -247,20 +253,63 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         if (seleccionar.showDialog(null, "Guardar") == JFileChooser.APPROVE_OPTION) {
-            archivo=seleccionar.getSelectedFile();
+            archivo = seleccionar.getSelectedFile();
             if (archivo.getName().endsWith("txt")) {
-                String Documento=txtAreaEntrada.getText();
-                String mensaje=GuardarArchivo(archivo, Documento);
-                if (mensaje!=null) {
+                String Documento = txtAreaEntrada.getText();
+                String mensaje = GuardarArchivo(archivo, Documento);
+                if (mensaje != null) {
                     JOptionPane.showMessageDialog(null, mensaje);
                 } else {
                     JOptionPane.showMessageDialog(null, "Archivo No Compatible");
                 }
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "Guardar Documento de Texto");
             }
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // Verificar si el JTextArea contiene texto
+        if (txtAreaEntrada.getText().trim().isEmpty()) {
+            // No hay contenido en el JTextArea, no se hace nada
+            return;
+        }
+        int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea guardar el archivo?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        if (respuesta == JOptionPane.YES_OPTION) {
+            JFileChooser fileChooser = new JFileChooser();
+
+            // Muestra el cuadro de diálogo para que el usuario elija la ubicación para guardar el archivo
+            int seleccion = fileChooser.showSaveDialog(this);
+
+            if (seleccion == JFileChooser.APPROVE_OPTION) {
+                File archivo = fileChooser.getSelectedFile();
+                try {
+                    // Crea un BufferedWriter para escribir en el archivo
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(archivo));
+
+                    // Obtiene el texto del JTextArea
+                    String texto = txtAreaEntrada.getText();
+
+                    // Escribe el contenido del JTextArea en el archivo
+                    writer.write(texto);
+
+                    // Cierra el BufferedWriter
+                    writer.close();
+
+                    JOptionPane.showMessageDialog(this, "El archivo se ha guardado correctamente.");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                // El usuario canceló la operación
+            }
+
+        } else if (respuesta == JOptionPane.NO_OPTION) {
+            //txtAreaEntrada.setText("");
+        } else {
+            // Código para cancelar la acción (si el usuario cierra el cuadro de diálogo)
+        }
+    }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void loadFileContent(File file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -284,14 +333,14 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
             }
         }
     }
-    
-    private String GuardarArchivo (File archivo, String documento){
+
+    private String GuardarArchivo(File archivo, String documento) {
         String mensaje = null;
         try {
             salida = new FileOutputStream(archivo);
-            byte[] bytxt=documento.getBytes();
+            byte[] bytxt = documento.getBytes();
             salida.write(bytxt);
-            mensaje="Archivo Guardado";
+            mensaje = "Archivo Guardado";
         } catch (Exception e) {
         }
         return mensaje;
