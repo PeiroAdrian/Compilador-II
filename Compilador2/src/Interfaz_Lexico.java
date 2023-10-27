@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -90,6 +89,7 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         lblSin = new javax.swing.JLabel();
         lblLex = new javax.swing.JLabel();
+        lblSema = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Compilador");
@@ -146,10 +146,13 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
         jLabel1.setText("Estados:");
 
         lblSin.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lblSin.setText("2) Sintaxis: --");
+        lblSin.setText("2) Sintaxis --");
 
         lblLex.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblLex.setText("1) Léxico: --");
+
+        lblSema.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblSema.setText("3) Semántico: --");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -179,11 +182,13 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(jLabel1)
-                .addGap(178, 178, 178)
+                .addGap(18, 18, 18)
                 .addComponent(lblLex)
-                .addGap(106, 106, 106)
+                .addGap(167, 167, 167)
                 .addComponent(lblSin)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(129, 129, 129)
+                .addComponent(lblSema)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -199,14 +204,16 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblLex)
-                            .addComponent(lblSin))))
-                .addGap(29, 29, 29)
+                            .addComponent(lblSin)
+                            .addComponent(lblSema)
+                            .addComponent(lblLex))
+                        .addGap(29, 29, 29))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)))
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -239,15 +246,21 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
         btnAccion.setEnabled(true);
         if (Obj_lexico.errorEncontrado) {
-            lblLex.setText("1) Léxico: ERROR");
+            lblLex.setText("1) Léxico: --");
         } else {
             lblLex.setText("1) Léxico: OK");
         }
 
         if (Obj_lexico.errorEncontradoSintactico) {
-            lblSin.setText("2) Sintaxis: ERROR");
+            lblSin.setText("2) Sintaxis: --");
         } else {
             lblSin.setText("2) Sintaxis: OK");
+        }
+        
+        if (Obj_lexico.errorEncontradoSemantico) {
+            lblSema.setText("3) Semántico: --");
+        }else{
+            lblSema.setText("3) Semántico: OK");
         }
     }//GEN-LAST:event_btnCompilarActionPerformed
 
@@ -389,6 +402,7 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblLex;
+    private javax.swing.JLabel lblSema;
     private javax.swing.JLabel lblSin;
     private javax.swing.JTextArea txtAreaEntrada;
     private javax.swing.JTextArea txtAreaSalida;

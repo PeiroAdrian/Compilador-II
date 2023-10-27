@@ -16,14 +16,15 @@ class lexico {
     String lexema = "";
     boolean errorEncontrado = false;
     boolean errorEncontradoSintactico = false;
+    boolean errorEncontradoSemantico = false;
 
     String archivo = "C:\\Users\\Adrian\\Desktop\\codigo.txt";
 
     // Variables para el semantico
     ArrayList<TablaSimbolos> Simbolos = new ArrayList<TablaSimbolos>();
     TablaSimbolos simbolo1 = new TablaSimbolos();
-    String tipoDeDato, iD;
-    int renglonT;
+    String tipoDeDato, iD; // tipo de dato e id
+    int renglonT; // renglon de la tabla de simbolos
 
     // Variables para el semantico desbordamiento
     String dlexema, dtipo;
@@ -258,7 +259,7 @@ class lexico {
                             }
                             while (p.token != 120) {
                                 statement();
-                                if (errorEncontradoSintactico) {
+                                if (errorEncontradoSintactico || errorEncontradoSemantico) {
                                     return;
                                 }
                             }
@@ -296,11 +297,9 @@ class lexico {
                 // return;
             }
         }
-
         System.out.println("\nImprimiendo Tabla de Simbolos:");
         for (int m = 0; m < Simbolos.size(); m++) {
-            System.out
-                    .println(Simbolos.get(m).lexema + " " + Simbolos.get(m).tipoDato + " " + Simbolos.get(m).numLinea);
+            System.out.println(Simbolos.get(m).lexema + " " + Simbolos.get(m).tipoDato + " " + Simbolos.get(m).numLinea);
         }
     }
 
@@ -529,13 +528,14 @@ class lexico {
                 }
 
             case 100:// id
+                //Deteccion de variable detectada
                 if (CompararExistencia(p) == 0) {
                     System.out.println("Error: La variable '"+ p.lexema+"' no existe");
-                    errorEncontradoSintactico = true;
+                    errorEncontradoSemantico = true;
                     while (p.token != 125) {
                         p = p.siguienteNodo;
                     }
-                    errorEncontradoSintactico = true;
+                    errorEncontradoSemantico = true;
                 } else {
                     idComparada = p.lexema;
                     if (dtipo.equals("int")) {
@@ -546,39 +546,41 @@ class lexico {
                                 if (p.token == 100) {
                                     if (CompararExistencia(p) == 0) {
                                         System.out.println("Error la variable: " + p.lexema + " no existe.");
-                                        errorEncontradoSintactico = true;
+                                        errorEncontradoSemantico = true;
                                         return;
                                     } else {
                                         if (CompararId(p, idComparada) == 0) {
                                             System.out.println(
-                                                "Error: La variable " + p.lexema + " no es del mismo tipo de dato");
-                                            errorEncontradoSintactico = true;
+                                            "Error: La variable " + p.lexema + " no es del mismo tipo de dato");
+                                            errorEncontradoSemantico = true;
                                             return;
                                         }
-                                        while (p.token != 125) {
+                                        while (p.token != 125) { // ;
                                             if (p.siguienteNodo.token == 122) {
                                                 System.out.println("Error: no se pueden utilizar cadenas");
+                                                errorEncontradoSemantico = true;
                                             }
                                             if (p.siguienteNodo.token == 102) {
                                                 System.out.println("Error: no se pueden utilizar floats");
+                                                errorEncontradoSemantico = true;
                                             }
                                             exp_simple();
                                         }
                                     }
                                 } else if (p.token == 101 || p.token == 104) { // numero o float
                                     if (p.lexema.length() > 10) {
-                                        System.out.println("Error: existe desbordamiento en el renglon " +p.renglon+ ", limite de digitos alcanzado");
-                                        errorEncontradoSintactico = true;
+                                        System.out.println("\nError: existe desbordamiento en el renglon " +p.renglon+ ", limite de digitos alcanzado");
+                                        errorEncontradoSemantico = true;
                                         p = p.siguienteNodo;
                                     } else {
-                                        while (p.token != 125) {
+                                        while (p.token != 125) { // ;
                                             if (p.siguienteNodo.token == 122) {
                                                 System.out.println("Error: no se pueden utilizar cadenas");
-                                                errorEncontradoSintactico = true;
+                                                errorEncontradoSemantico = true;
                                             }
                                             if (p.siguienteNodo.token == 102) {
                                                 System.out.println("Error: no se pueden utilizar floats");
-                                                errorEncontradoSintactico = true;
+                                                errorEncontradoSemantico = true;
                                             }
                                             exp_simple();
                                         }
@@ -587,8 +589,8 @@ class lexico {
                                 }
                             } else {
                                 if (p.token ==  102 || p.token == 122) { // float o String
-                                    System.out.println("Error: se espera un entero");
-                                    errorEncontradoSintactico = true;
+                                    System.out.println("\nError: se espera un entero en el renglon "+p.renglon);
+                                    errorEncontradoSemantico = true;
                                     return;
                                 }
                                 System.out.println("Error, se espera: id o numero");
@@ -617,15 +619,15 @@ class lexico {
                             if (p.token == 100 || p.token == 102 || p.token == 104) {// id o numero
                                 if (p.token == 102 || p.token == 104) {
                                     if (p.lexema.length() > 10) {
-                                        System.out.println("Error: existe desbordamiento en el renglon " +p.renglon+ ", limite de digitos alcanzado");
+                                        System.out.println("\nError: existe desbordamiento en el renglon " +p.renglon+ ", limite de digitos alcanzado");
                                         p = p.siguienteNodo;
-                                        errorEncontradoSintactico = true;
+                                        errorEncontradoSemantico = true;
                                     } else {
 
                                         while (p.token != 125) {
                                             if (p.siguienteNodo.token == 122) {
                                                 System.out.println("Error: no se pueden utilizar cadenas");
-                                                errorEncontradoSintactico = true;
+                                                errorEncontradoSemantico = true;
                                             }
                                             exp_simple();
 
@@ -661,11 +663,11 @@ class lexico {
                                 while (p.token != 125) {
                                     if (p.siguienteNodo.token == 102) {
                                         System.out.println("Error: no se pueden utilizar floats");
-                                        errorEncontradoSintactico = true;
+                                        errorEncontradoSemantico = true;
                                     }
                                     if (p.siguienteNodo.token == 101) {
                                         System.out.println("Error: no se pueden utilizar enteros");
-                                        errorEncontradoSintactico = true;
+                                        errorEncontradoSemantico = true;
                                     }
                                     exp_simple();
                                 }
@@ -718,9 +720,7 @@ class lexico {
             primerId = p.lexema;
             if (CompararExistencia(p) == 0) {
                 System.out.println("Error: La variable '"+p.lexema+"' no existe");
-                errorEncontradoSintactico = true;
-
-                
+                errorEncontradoSemantico = true;
             }
         }
         if (exp_simple()) {
@@ -729,11 +729,11 @@ class lexico {
                     CompararId(p, archivo);
                     if (CompararExistencia(p) == 0) {
                         System.out.println("Error: La variable no existe:" + p.lexema);
-                        errorEncontradoSintactico = true;
+                        errorEncontradoSemantico = true;
                     }
                     if (CompararId(p, idComparada) == 0) {
                         System.out.println("Error: La variable '" + p.lexema + "' no es del mismo tipo de dato");
-                        errorEncontradoSintactico = true;
+                        errorEncontradoSemantico = true;
                         return;
                     }
                 }
@@ -750,6 +750,7 @@ class lexico {
 
     private boolean exp_simple() {
         if (errorEncontradoSintactico) {
+            p = p.siguienteNodo;
             return false;
         }
         if (signo()) {// manda a llamar signo
@@ -949,8 +950,8 @@ class lexico {
         for (int m = 0; m < Simbolos.size(); m++) {
             if (Simbolos.get(m).lexema.equals(p.lexema)) {
                 System.out.println(
-                        "No se puede utilizar una variable que ya está inicializada, el id " + p.lexema + " ya existe");
-
+                    "No se puede utilizar una variable que ya está inicializada, el id " + p.lexema + " ya existe");
+                    errorEncontradoSemantico = true;
                 return 0;
             }
         }
