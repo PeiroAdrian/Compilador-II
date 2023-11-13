@@ -309,6 +309,8 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
                     // Cierra el BufferedWriter
                     writer.close();
 
+                    txtAreaEntrada.setText("");
+
                     JOptionPane.showMessageDialog(this, "El archivo se ha guardado correctamente.");
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -318,7 +320,7 @@ public class Interfaz_Lexico extends javax.swing.JFrame {
             }
 
         } else if (respuesta == JOptionPane.NO_OPTION) {
-            //txtAreaEntrada.setText("");
+            txtAreaEntrada.setText("");
         } else {
             // Código para cancelar la acción (si el usuario cierra el cuadro de diálogo)
         }
