@@ -1,6 +1,3 @@
-
-
-
 class nodo {
     String lexema;
     int token;

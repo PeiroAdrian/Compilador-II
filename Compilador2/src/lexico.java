@@ -542,6 +542,9 @@ class lexico {
                         p = p.siguienteNodo;
                         if (p.token == 123) {// =
                             p = p.siguienteNodo;
+                            if (p.token == 117) {// (
+                                p = p.siguienteNodo;
+                            }
                             if (p.token == 100 || p.token == 101 || p.token == 104) {// id o numero
                                 if (p.token == 100) {
                                     if (CompararExistencia(p) == 0) {
@@ -565,6 +568,9 @@ class lexico {
                                                 errorEncontradoSemantico = true;
                                             }
                                             exp_simple();
+                                            if (p.token == 118) {// )
+                                                p = p.siguienteNodo;
+                                            }
                                         }
                                     }
                                 } else if (p.token == 101 || p.token == 104) { // numero o float
@@ -616,8 +622,11 @@ class lexico {
                         p = p.siguienteNodo;
                         if (p.token == 123) {// =
                             p = p.siguienteNodo;
+                            if (p.token == 117) {// (
+                                p = p.siguienteNodo;
+                            }
                             if (p.token == 100 || p.token == 102 || p.token == 104) {// id o numero
-                                if (p.token == 102 || p.token == 104) {
+                                if (p.token == 102 || p.token == 104 || p.token == 100) {
                                     if (p.lexema.length() > 10) {
                                         System.out.println("\nError: existe desbordamiento en el renglon " +p.renglon+ ", limite de digitos alcanzado");
                                         p = p.siguienteNodo;
@@ -630,7 +639,9 @@ class lexico {
                                                 errorEncontradoSemantico = true;
                                             }
                                             exp_simple();
-
+                                            if (p.token == 118) {// )
+                                                p = p.siguienteNodo;
+                                            }
                                         }
                                     }
 
@@ -659,6 +670,9 @@ class lexico {
                         p = p.siguienteNodo;
                         if (p.token == 123) {// =
                             p = p.siguienteNodo;
+                            if (p.token == 117) {// (
+                                p = p.siguienteNodo;
+                            }
                             if (p.token == 100 || p.token == 122) {// id o numero
                                 while (p.token != 125) {
                                     if (p.siguienteNodo.token == 102) {

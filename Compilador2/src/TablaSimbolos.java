@@ -1,4 +1,3 @@
-
 public class TablaSimbolos {
 
     int numLinea;
